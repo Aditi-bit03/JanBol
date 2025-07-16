@@ -1,3 +1,4 @@
+
 const { gql } = require('apollo-server-express');
 const userTypeDefs = require('./userSchema');
 const issueTypeDefs = require('./issueSchema');
@@ -9,7 +10,7 @@ const rootTypeDefs = gql`
   scalar Upload
 
   type Query {
-    _empty: String
+     _empty: String
   }
 
   type Mutation {

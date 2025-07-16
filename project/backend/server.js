@@ -30,23 +30,33 @@ async function startServer() {
   }));
 
   // Rate limiting
-  const limiter = rateLimit({
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-    max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again later.',
-  });
+const limiter = rateLimit({
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
+  message: 'Too many requests from this IP, please try again later.',
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).json({ error: options.message });
+  }
+});
+
   app.use('/graphql', limiter);
 
   // Compression middleware
   app.use(compression());
 
   // CORS configuration
+  
   const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' 
-      ? ['https://your-frontend-domain.com'] 
-      : ['http://localhost:3000', 'http://localhost:19006', 'exp://192.168.1.100:19000'],
-    credentials: true,
-  };
+  origin: [
+    'http://localhost:4000',        // for direct browser queries
+    'https://studio.apollographql.com',  // for Apollo Sandbox
+    'http://localhost:19006',       // for Expo web
+    // Add other relevant origins here
+  ],
+  credentials: true,
+};
+app.use('/graphql', cors(corsOptions));
+
 
   // Create Apollo Server
   const server = new ApolloServer({

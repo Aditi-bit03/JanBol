@@ -51,6 +51,7 @@ export default function HomeScreen() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'critical': return '#FF4757';
+      
       case 'high': return '#FF9F43';
       case 'medium': return '#26D0CE';
       case 'low': return '#6C5CE7';

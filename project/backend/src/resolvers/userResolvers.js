@@ -136,7 +136,10 @@ const userResolvers = {
           password: input.password,
           location: input.location,
           preferences: {
-            language: input.language || 'hindi'
+            preferences: {
+  language: input.language?.toLowerCase() || 'hindi'
+}
+
           }
         });
 
